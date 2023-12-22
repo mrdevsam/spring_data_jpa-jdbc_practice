@@ -27,27 +27,13 @@ public class AuthorDaoImpl implements AuthorDao {
 			rs = pst.executeQuery();
 
 			if(rs.next()) {
-				Author author = new Author();
-				author.setId(id);
-				author.setFirstName(rs.getString("first_name"));
-				author.setLastName(rs.getString("last_name"));
-				return author;
+				return getAuthorFromRS(rs);
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(rs != null) {
-					rs.close();
-				}
-				
-				if(pst != null) {
-					pst.close();
-				}
-				
-				if(cn != null) {
-					cn.close();
-				}
+				closeAll(rs, pst, cn);
 			} catch(SQLException e) {
 				e.printStackTrace();
 			}
@@ -71,32 +57,40 @@ public class AuthorDaoImpl implements AuthorDao {
 			rs = pst.executeQuery();
 
 			if(rs.next()) {
-				Author author = new Author();
-				author.setId(rs.getLong("id"));
-				author.setFirstName(rs.getString("first_name"));
-				author.setLastName(rs.getString("last_name"));
-				return author;
+				return getAuthorFromRS(rs);
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(rs != null) {
-					rs.close();
-				}
-				
-				if(pst != null) {
-					pst.close();
-				}
-				
-				if(cn != null) {
-					cn.close();
-				}
+				closeAll(rs, pst, cn);
 			} catch(SQLException e) {
 				e.printStackTrace();
 			}
 		}
 			
 		return null;
+	}
+
+	private Author getAuthorFromRS(ResultSet rs) throws SQLException {
+		Author author = new Author();
+		author.setId(rs.getLong("id"));
+		author.setFirstName(rs.getString("first_name"));
+		author.setLastName(rs.getString("last_name"));
+		return author;
+	}
+
+	private void closeAll(ResultSet rs, PreparedStatement pst, Connection cn) throws SQLException {
+		if(rs != null) {
+			rs.close();
+		}
+		
+		if(pst != null) {
+			pst.close();
+		}
+		
+		if(cn != null) {
+			cn.close();
+		}
 	}
 }
