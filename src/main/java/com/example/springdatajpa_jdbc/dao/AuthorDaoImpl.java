@@ -3,10 +3,7 @@ package com.example.springdatajpa_jdbc.dao;
 import com.example.springdatajpa_jdbc.domain.Author;
 import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 @Component
 public class AuthorDaoImpl implements AuthorDao {
@@ -20,13 +17,14 @@ public class AuthorDaoImpl implements AuthorDao {
 	@Override
 	public Author getById(Long id) {
 		Connection cn = null;
-		Statement st = null;
+		PreparedStatement pst = null;
 		ResultSet rs = null;
 		
 		try {
 			cn = ds.getConnection();
-			st = cn.createStatement();
-			rs = st.executeQuery("select * from author where id = " + id);
+			pst = cn.prepareStatement("select * from author where id = ?");
+			pst.setLong(1, id);
+			rs = pst.executeQuery();
 
 			if(rs.next()) {
 				Author author = new Author();
@@ -43,8 +41,8 @@ public class AuthorDaoImpl implements AuthorDao {
 					rs.close();
 				}
 				
-				if(st != null) {
-					st.close();
+				if(pst != null) {
+					pst.close();
 				}
 				
 				if(cn != null) {
