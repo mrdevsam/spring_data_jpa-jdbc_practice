@@ -107,6 +107,33 @@ public class AuthorDaoImpl implements AuthorDao {
 		return null;
 	}
 
+	@Override
+    public Author updateAuthor(Author author) {
+        Connection cn = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+
+        try {
+        	cn = ds.getConnection();
+            pst = cn.prepareStatement("update author set first_name = ?, last_name = ? where author.id = ?");
+            pst.setString(1, author.getFirstName());
+            pst.setString(2, author.getLastName());
+            pst.setLong(3, author.getId());
+            pst.execute();
+            
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+            	closeAll(rs, pst, cn);
+            } catch(SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return this.getById(author.getId());
+    }
+
 	private Author getAuthorFromRS(ResultSet rs) throws SQLException {
 		Author author = new Author();
 		author.setId(rs.getLong("id"));
