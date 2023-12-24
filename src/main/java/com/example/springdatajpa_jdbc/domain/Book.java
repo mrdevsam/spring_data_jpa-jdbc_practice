@@ -16,5 +16,7 @@ public class Book{
 	private String isbn;
 	private String publisher;
 
-	private Long authorId;
+	@Transient
+	private Author authorId;
+
 }
